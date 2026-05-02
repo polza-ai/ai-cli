@@ -17,6 +17,10 @@
 
 ---
 
+<p align="center">
+  <img src="demo.gif" alt="AI CLI Demo" width="100%">
+</p>
+
 ```bash
 npm install -g @polza-ai/ai-cli
 ai login
