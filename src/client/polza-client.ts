@@ -75,6 +75,9 @@ export class PolzaClient {
     );
 
     for await (const chunk of parseSSEStream(stream as AsyncIterable<Buffer>)) {
+      if (chunk.error) {
+        throw new Error(chunk.error.message ?? 'Ошибка генерации');
+      }
       const content = chunk.choices[0]?.delta?.content;
       if (content) yield content;
     }

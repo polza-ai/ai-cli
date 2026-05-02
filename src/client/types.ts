@@ -61,6 +61,10 @@ export interface ChatCompletionChunk {
     delta: { role?: string; content?: string };
     finish_reason: string | null;
   }>;
+  error?: {
+    code?: string;
+    message?: string;
+  };
 }
 
 // /api/v1/media response

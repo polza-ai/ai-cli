@@ -44,11 +44,16 @@ program.parseAsync = async (argv?: string[]) => {
     return await originalParse(argv);
   } catch (error) {
     const isJson = process.argv.includes('--json');
-    process.stderr.write(formatError(error, false) + '\n');
+    const exitCode = error instanceof Error && 'exitCode' in error ? (error as any).exitCode : 1;
+    const msg = formatError(error, false) + '\n';
     if (isJson) {
       process.stdout.write(formatError(error, true) + '\n');
     }
-    process.exit(error instanceof Error && 'exitCode' in error ? (error as any).exitCode : 1);
+    // Ensure stderr is flushed before exit
+    await new Promise<void>(r => {
+      process.stderr.write(msg, () => r());
+    });
+    process.exit(exitCode);
   }
 };
 
