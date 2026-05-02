@@ -100,12 +100,9 @@ export class PolzaClient {
     return await this.pollMediaStatus(data.id, pollInterval);
   }
 
-  async getBalance(): Promise<{ amount: number; spentAmount: number }> {
-    const { data } = await this.http.get<{ amount: string; spentAmount: string }>('/balance');
-    return {
-      amount: parseFloat(data.amount),
-      spentAmount: parseFloat(data.spentAmount),
-    };
+  async getBalance(): Promise<number> {
+    const { data } = await this.http.get<{ amount: string }>('/balance');
+    return parseFloat(data.amount);
   }
 
   async pollMediaStatus(id: string, interval: number): Promise<MediaGenerationResponse> {

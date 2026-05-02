@@ -17,8 +17,8 @@ export async function printCostInfo(
   }
 
   try {
-    const balance = await client.getBalance();
-    parts.push(`баланс: ${chalk.green(formatCost(balance.amount))}`);
+    const amount = await client.getBalance();
+    parts.push(`баланс: ${chalk.green(formatCost(amount))}`);
   } catch {
     // balance endpoint may fail, skip
   }
