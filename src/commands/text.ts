@@ -5,8 +5,9 @@ import { PolzaClient } from '../client/polza-client.js';
 import { resolvePrompt } from '../utils/prompt.js';
 import { handleApiError } from '../utils/error.js';
 import { jsonOutput } from '../formatters/json.js';
+import { printCostInfo } from '../utils/cost.js';
 
-const DEFAULT_MODEL = 'openai/gpt-4o';
+const DEFAULT_MODEL = 'google/gemini-3.1-flash-lite-preview';
 
 export function registerTextCommand(program: Command): void {
   program
@@ -43,9 +44,11 @@ export function registerTextCommand(program: Command): void {
           if (opts.json) {
             process.stdout.write(jsonOutput({ text: fullText, model }) + '\n');
           }
+          await printCostInfo(client, undefined);
         } else {
           const response = await client.chatCompletion(request);
           const text = response.choices[0]?.message?.content ?? '';
+          const costRub = (response.usage as any)?.cost_rub ?? (response.usage as any)?.cost;
 
           if (opts.json) {
             process.stdout.write(jsonOutput({
@@ -56,6 +59,7 @@ export function registerTextCommand(program: Command): void {
           } else {
             process.stdout.write(text + '\n');
           }
+          await printCostInfo(client, costRub);
         }
       } catch (error) {
         handleApiError(error);

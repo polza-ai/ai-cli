@@ -10,8 +10,9 @@ import { downloadToFile, generateOutputPath } from '../utils/fs.js';
 import { getMediaUrls } from '../client/types.js';
 import { buildMediaInput, parseSetParams, formatModelParams } from '../utils/media-params.js';
 import { readStdin } from '../utils/stdin.js';
+import { printCostInfo } from '../utils/cost.js';
 
-const DEFAULT_MODEL = 'kling/v2.5-turbo';
+const DEFAULT_MODEL = 'google/veo3_fast';
 
 export function registerVideoCommand(program: Command): void {
   program
@@ -84,6 +85,7 @@ export function registerVideoCommand(program: Command): void {
         const concurrency = opts.concurrency ?? 2;
         const results: Array<{ path: string; url: string }> = [];
         const errors: Error[] = [];
+        let totalCost = 0;
 
         const spinner = ora(`Генерация видео (0/${count})...`).start();
         let completed = 0;
@@ -102,6 +104,7 @@ export function registerVideoCommand(program: Command): void {
             }
 
             const response = await client.mediaGenerate(model, input, 5_000);
+            totalCost += response.usage?.cost_rub ?? response.usage?.cost ?? 0;
             const urls = getMediaUrls(response);
 
             for (const url of urls) {
@@ -146,6 +149,8 @@ export function registerVideoCommand(program: Command): void {
             console.error(chalk.red('✗'), e.message);
           }
         }
+
+        if (results.length > 0) await printCostInfo(client, totalCost);
 
         if (errors.length > 0 && results.length > 0) process.exitCode = 2;
         if (errors.length > 0 && results.length === 0) process.exitCode = 1;

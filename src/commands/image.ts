@@ -10,8 +10,9 @@ import { downloadToFile, generateOutputPath } from '../utils/fs.js';
 import { getMediaUrls } from '../client/types.js';
 import { buildMediaInput, parseSetParams, formatModelParams } from '../utils/media-params.js';
 import { displayInlineImage } from '../utils/inline-image.js';
+import { printCostInfo } from '../utils/cost.js';
 
-const DEFAULT_MODEL = 'openai/gpt-image-1.5';
+const DEFAULT_MODEL = 'google/gemini-3.1-flash-image-preview';
 
 export function registerImageCommand(program: Command): void {
   program
@@ -60,6 +61,7 @@ export function registerImageCommand(program: Command): void {
         const concurrency = opts.concurrency ?? 4;
         const results: Array<{ path: string; url: string }> = [];
         const errors: Error[] = [];
+        let totalCost = 0;
         const isTTY = process.stdout.isTTY;
 
         const spinner = ora(`Генерация изображений (0/${count})...`).start();
@@ -69,6 +71,7 @@ export function registerImageCommand(program: Command): void {
           try {
             const input = buildMediaInput(userPrompt, userParams, modelInfo);
             const response = await client.mediaGenerate(model, input, 3_000);
+            totalCost += response.usage?.cost_rub ?? response.usage?.cost ?? 0;
             const urls = getMediaUrls(response);
 
             for (const url of urls) {
@@ -122,6 +125,8 @@ export function registerImageCommand(program: Command): void {
             console.error(chalk.red('✗'), e.message);
           }
         }
+
+        if (results.length > 0) await printCostInfo(client, totalCost);
 
         if (errors.length > 0 && results.length > 0) process.exitCode = 2;
         if (errors.length > 0 && results.length === 0) process.exitCode = 1;

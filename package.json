@@ -1,6 +1,6 @@
 {
   "name": "@polza-ai/ai-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "CLI for generating text, images and video via Polza AI API",
   "license": "MIT",
   "homepage": "https://github.com/polza-ai/ai-cli#readme",
