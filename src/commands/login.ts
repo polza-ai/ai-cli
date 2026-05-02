@@ -19,14 +19,10 @@ export function registerLoginCommand(program: Command): void {
       const authorizeUrl = buildAuthorizeUrl({ callbackUrl, codeChallenge, state });
 
       console.log();
-      const opened = await openBrowser(authorizeUrl);
-      if (opened) {
-        console.log(chalk.dim('Браузер открыт для авторизации.'));
-      } else {
-        console.log('Откройте ссылку в браузере для авторизации:');
-        console.log(chalk.cyan(authorizeUrl));
-      }
+      console.log('Откройте ссылку в браузере для авторизации:');
+      console.log(chalk.cyan(authorizeUrl));
       console.log();
+      await openBrowser(authorizeUrl);
 
       const spinner = ora('Ожидание авторизации в браузере...').start();
 

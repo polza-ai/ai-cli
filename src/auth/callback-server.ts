@@ -2,7 +2,7 @@ import { createServer, type Server } from 'node:http';
 import { URL } from 'node:url';
 import { AiCliError } from '../utils/error.js';
 
-const TIMEOUT_MS = 120_000;
+const TIMEOUT_MS = 300_000;
 
 const SUCCESS_HTML = `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>AI CLI</title></head>
