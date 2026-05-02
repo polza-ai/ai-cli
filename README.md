@@ -1,8 +1,4 @@
-<p align="center">
-  <img src="https://polza.ai/favicon.svg" width="64" height="64" alt="AI CLI">
-</p>
-
-<h1 align="center">ai</h1>
+<h1 align="center">⚡ ai</h1>
 
 <p align="center">
   <strong>Генерация текста, изображений и видео прямо из терминала.</strong><br>
